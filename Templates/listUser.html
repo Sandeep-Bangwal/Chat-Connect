@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}All{% endblock %}
+
+{% block body %}
+
+
+<div class="container mt-4 card p-3 " style="width: 22rem; height: 34rem;">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h4>ChatConnect</h4>
+        <div>
+            <img src="{{request.user.userProfile.pic.url}}" class="rounded-circle" alt="Cinque Terre" width="50px" height="46px">
+            <p class="text-center">@{{request.user}}</p>
+        </div>
+    </div>
+    {% include 'nav.html' %}
+    {% if messages %}
+    {% for message in messages %}
+     <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+     {{ message }}.
+    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+    </div> 
+    {% endfor %}
+    {% endif %}
+    <div class="container mt-1">
+        
+        {% for users in newRequest %}
+        <p class="text-muted">New Request</p>
+        <div class="card p-2 mt-1"  style="height: 3.5rem;">
+            <div class="d-flex justify-content-between align-items-center">
+                <div class="img">
+                    <img src="{{ users.pic.url }}" class="rounded-circle" alt="Cinque Terre" width="42px" height="40px">
+                </div>
+                <div class="name">
+                    <h6>{{users.user}}</h6>
+                </div>
+                <div class="end">
+                    <a href="{% url 'accept_friend_request' users.user_id %}"><button type="submit" class="btn btn-success">Accept</button></a>
+                </div>
+           </div>
+        </div>
+        {% endfor%}
+        <p class="text-muted">Suggested for you</p>
+        {% for users in list_user %}
+        <div class="card p-2 mt-1"  style="height: 3.5rem;">
+            <div class="d-flex justify-content-between align-items-center">
+ 
+                <div class="img">
+                    <img src="{{ users.pic.url }}" class="rounded-circle" alt="Profile Picture" width="42px" height="40px">
+                </div>
+                <div class="name">
+                    <h6>{{users.user}}</h6>
+                </div>
+                <div class="end">
+                    <a href="{% url 'send_friend_request' users.user_id %}"><button type="submit" class="btn btn-primary">Add</button></a>
+                </div>
+           </div>
+        </div>
+        {% endfor%}
+    </div>
+</div>
+
+
+{% endblock body%}

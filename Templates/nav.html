@@ -1,0 +1,48 @@
+<div class="container">
+    <div class="d-flex justify-content-between align-items-center" style="list-style: none;">
+        <li class="nav-item" >
+            <a href="{% url 'home' %}" class="nav-link text-dark"><i class="fa-solid fa-house"></i></a>
+        </li>
+        <li class="nav-item" id="notification">
+                <a href="{% url 'notification' %}" class="nav-link  text-dark">
+                <i class="fa-solid fa-bell"></i><span class="badge bg-danger" id ="count"></span>
+                </a>
+            </a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'userLists' %}" class="nav-link  text-dark"><i class="fa-solid fa-user-group"></i></a>
+        </li>
+        <li class="nav-item">
+            <a href="{% url 'profile' %}" class="nav-link text-dark"><i class="fa-solid fa-gear"></i></i></a>
+            </li>
+        <li class="nav-item">
+            <a href="{% url 'logout' %}" class="nav-link text-dark"><i class="fa-solid fa-right-from-bracket"></i></a>
+        </li>
+    </div>
+</div>
+
+
+<script>
+   
+    const socket = new WebSocket('ws://'+ window.location.host +'/wc/notification');
+
+    socket.onopen = function () {
+        console.log("Connected to WebSocket...");
+    }
+
+    socket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+        const notificationObj = JSON.parse(data.notification); 
+        console.log(notificationObj.count);
+        console.log(data); 
+
+       document.getElementById('count').innerHTML = notificationObj.count
+
+     
+    };
+
+    socket.onclose = function (event) {
+        console.log("WebSocket connection closed:", event);
+    }
+
+</script>

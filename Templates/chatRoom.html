@@ -1,0 +1,111 @@
+{% extends "base.html" %}
+
+{% block title %}Chat{% endblock %}
+
+<style>
+/* Add these styles to your CSS */
+.container.card {
+    max-height: 34rem;
+}
+
+.chat-box {
+    max-height: calc(34rem - 100px); /* Adjust the value as needed */
+    overflow-y: auto;
+    padding: 10px;
+}
+
+.message {
+    margin-bottom: 15px;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #f5f6f7;
+}
+
+.message-content {
+    margin: 0;
+}
+
+.message-timestamp {
+    margin: 0;
+    text-align: right;
+}
+
+.mt-auto {
+    margin-top: auto;
+}
+
+
+</style>
+
+{% block body %}
+
+<div class="container mt-4 card p-3" style="width: 22rem; height: 34rem; overflow-y: auto;">
+    <div class="container d-flex justify-content-between align-items-center">
+        <li class="nav-item" style="list-style: none;">
+            <a href="{% url 'home' %}" class="nav-link text-muted"><i class="fa-solid fa-house"></i></a>
+        </li>
+        <div>
+            <h6>{{ friend_name.username }}</h6>
+        </div>
+    </div>
+    <hr>
+    <div class="chat-box" id="chat-log">
+        {% for message in messages %}
+        <div class="message">
+            <p class="small p-2 mb-1 rounded-3" style="background-color: #f5f6f7;">{{ message.messages }}</p>
+            <p class="small mb-3 rounded-3 text-muted">{{ message.timestamp }}</p>
+        </div>
+        {% endfor %}
+    </div>
+    <div class="bg-light">
+        <div class="input-group mb-3">
+            <input type="text" class="form-control" placeholder="Type your message" id="chat-message-input">
+            <button class="btn btn-outline-secondary" type="button" id="chat-message-submit">
+                <i class="fas fa-paper-plane"></i>
+            </button>
+        </div>
+    </div>
+</div>
+
+
+
+<script>
+    var recipientId = '{{ recipientId }}';
+    const socket = new WebSocket('ws://' + window.location.host + '/wc/chatMessages/' + recipientId);
+    const timestamp = new Date().toLocaleString();
+    socket.onopen = function () {
+        console.log("Connected to WebSocket...");
+    }
+
+    socket.onmessage = function (event) {
+        const data = JSON.parse(event.data);
+
+        // Create a new message element and append it to the chat log
+        const chatLog = document.getElementById('chat-log');
+        const messageDiv = document.createElement('div');
+        messageDiv.className = 'message';
+        messageDiv.innerHTML = `
+            <p class="small p-2 mb-1 rounded-3" style="background-color: #f5f6f7;">${data.messages}</p>
+            <p class="small mb-3 rounded-3 text-muted">${timestamp}</p>
+        `;
+        chatLog.appendChild(messageDiv);
+    }
+
+    socket.onclose = function (event) {
+        console.log("WebSocket connection closed:", event);
+    }
+    
+    document.getElementById("chat-message-submit").onclick = function (event) {
+        const messagesInputDom = document.getElementById("chat-message-input");
+        const message = messagesInputDom.value;
+        const data = {
+            'receiver': recipientId,
+            'messages': message,
+            'timestamp':timestamp
+        };
+        socket.send(JSON.stringify(data));
+        messagesInputDom.value = '';
+    };
+</script>
+
+{% endblock body%}

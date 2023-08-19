@@ -1,0 +1,26 @@
+{% extends "base.html" %}
+
+{% block title %}signIn{% endblock %}
+
+{% block body %}
+
+<div class="container mt-4 card p-3 " style="width: 22rem; height: 32rem;">
+    <div class="first">
+        <div>
+           <h5>Sign In</h5>
+           <p>or <a href="{% url 'singup' %}" class="text-muted" style="text-decoration: none;">Create a account</a></p>
+           <hr>
+       </div>
+   </div>
+   {% include 'alert.html' %}
+    <form method="post"  action="{% url 'singIn' %}">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <div class="d-grid gap-2">
+        <button type="submit" class="btn btn-primary">Sign In</button>
+    </div>
+    </form>
+</div>
+
+
+{% endblock body%}

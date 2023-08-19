@@ -1,0 +1,37 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block body %}
+
+
+<div class="container mt-4 card p-3 " style="width: 22rem; height: 34rem;">
+    <div class="container d-flex justify-content-between align-items-center">
+        <h4>ChatConnect</h4>
+        <div>
+            <img src="{{request.user.userProfile.pic.url}}" class="rounded-circle" alt="Cinque Terre" width="50px" height="46px">
+            <p class="text-center">@{{request.user}}</p>
+        </div>
+    </div>
+    {% include 'nav.html' %}
+    <div class="container mt-1">
+        {% for notifications in notification %}
+        {% if notifications.is_seen == False %}
+        <div class="container card p-1 mt-1" style="height: 2.5rem;">
+            <p style="font-size: 11px;" class="fw-bold">{{notifications.notification_msg}} <br>
+               <i class="text-muted">{{ notifications.created }}</i> </p>
+        </div>
+        {% else %}
+        <div class="container card p-1 mt-1" style="height: 2.5rem;">
+            <p style="font-size: 11px;">{{notifications.notification_msg}} <br>
+               <i class="text-muted">{{ notifications.created }}</i> </p>
+        </div>
+        {% endif %}
+     
+          
+        {% endfor%}
+    </div>
+</div>
+
+
+{% endblock body%}
